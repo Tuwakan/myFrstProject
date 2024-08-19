@@ -38,8 +38,8 @@ int main()
     envySymbol        .setString(L"妬");
     wrathSymbol       .setString(L"怒");
     lustSymbol        .setString(L"情");
-    gluttonySymbol    .setString(L"怠");
-    slothSymbol       .setString(L"飢");
+    gluttonySymbol    .setString(L"飢");
+    slothSymbol       .setString(L"怠");
     evilSymbol        .setString(L"悪");
 
     prideSymbol       .setCharacterSize(50);
@@ -99,10 +99,10 @@ int main()
     gluttonyButton  .setSize(sizeOfButtons, sizeOfButtons);
     slothButton     .setSize(sizeOfButtons, sizeOfButtons);
 
-    sf::Vector2f startPositionOfButtons {225.f, 225.f};
+    sf::Vector2f startPositionOfButtons {250.f, 250.f};
 
     float gapBetweenButtons = 50.f;
-    
+
     prideButton     .setPosition(startPositionOfButtons.x, 
                                  startPositionOfButtons.y);
 
@@ -123,10 +123,10 @@ int main()
     envyButton      .setPosition(startPositionOfButtons.x,
                                  2.f * sizeOfButtons + 2.f * gapBetweenButtons + startPositionOfButtons.y);
 
-    gluttonyButton  .setPosition(sizeOfButtons + gapBetweenButtons + startPositionOfButtons.x,
+    slothButton     .setPosition(sizeOfButtons + gapBetweenButtons + startPositionOfButtons.x,
                                  2.f * sizeOfButtons + 2.f * gapBetweenButtons + startPositionOfButtons.y);
 
-    slothButton     .setPosition(2.f * sizeOfButtons + 2.f * gapBetweenButtons + startPositionOfButtons.x,
+    gluttonyButton  .setPosition(2.f * sizeOfButtons + 2.f * gapBetweenButtons + startPositionOfButtons.x,
                                  2.f * sizeOfButtons + 2.f * gapBetweenButtons + startPositionOfButtons.y);
 
 
@@ -170,9 +170,6 @@ int main()
     */
 
     //Button button(sf::Vector2f(30.f, 20.f));
-
-    //sf::RectangleShape rectangle(sf::Vector2f(50, 50));
-    //rectangle.setFillColor(sf::Color(255, 0, 255, 128));
 
     sf::Vector2f localCursorPosition{};
 
@@ -316,6 +313,7 @@ int main()
 
         window.draw(slothButton);
         window.draw(slothButton.getButtonText());
+
         window.display();
 
     }
