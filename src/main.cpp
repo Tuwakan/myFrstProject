@@ -9,27 +9,130 @@
 
 int main()
 {
-    sf::RenderWindow window(sf::VideoMode(500, 500), "My window");
-
-    window.setVerticalSyncEnabled(true);
-
     sf::Font font;
-    if (!font.loadFromFile("D:\\resources\\consolab.ttf"))
+    if (!font.loadFromFile("D:\\resources\\msgothic.ttc"))
     {
-        std::cout << "!font.loadFromFile(\"arial.ttf\")" << std::endl;
+        std::cout << "!font.loadFromFile(\"msgothic.ttc\")" << std::endl;
     }
 
-    sf::Text text;
-    text.setFont(font);
-    text.setString("A");
-    text.setCharacterSize(50);
-    text.setFillColor(sf::Color::Red);
+    sf::Text prideSymbol;
+    sf::Text greedSymbol;
+    sf::Text envySymbol;
+    sf::Text wrathSymbol;
+    sf::Text lustSymbol;
+    sf::Text gluttonySymbol;
+    sf::Text slothSymbol;
+    sf::Text evilSymbol;
 
-    sf::Text text2;
-    text2.setFont(font);
-    text2.setString("CU\nM");
-    text2.setCharacterSize(40);
-    text2.setFillColor(sf::Color::Green);
+    prideSymbol       .setFont(font);
+    greedSymbol       .setFont(font);
+    envySymbol        .setFont(font);
+    wrathSymbol       .setFont(font);
+    lustSymbol        .setFont(font);
+    gluttonySymbol    .setFont(font);
+    slothSymbol       .setFont(font);
+    evilSymbol        .setFont(font);
+
+    prideSymbol       .setString(L"慢");
+    greedSymbol       .setString(L"欲");
+    envySymbol        .setString(L"妬");
+    wrathSymbol       .setString(L"怒");
+    lustSymbol        .setString(L"情");
+    gluttonySymbol    .setString(L"怠");
+    slothSymbol       .setString(L"飢");
+    evilSymbol        .setString(L"悪");
+
+    prideSymbol       .setCharacterSize(50);
+    greedSymbol       .setCharacterSize(50);
+    envySymbol        .setCharacterSize(50);
+    wrathSymbol       .setCharacterSize(50);
+    lustSymbol        .setCharacterSize(50);
+    gluttonySymbol    .setCharacterSize(50);
+    slothSymbol       .setCharacterSize(50);
+    evilSymbol        .setCharacterSize(50);
+
+    prideSymbol       .setFillColor(sf::Color(128, 255, 0));   // inverted Violet
+    greedSymbol       .setFillColor(sf::Color(0, 0, 255));     // inverted Yellow
+    envySymbol        .setFillColor(sf::Color(255, 0, 255));   // inverted Green
+    wrathSymbol       .setFillColor(sf::Color(0, 255, 255));   // inverted Red
+    lustSymbol        .setFillColor(sf::Color(255, 255, 0));   // inverted Blue
+    gluttonySymbol    .setFillColor(sf::Color(0, 90, 255));    // inverted Orange
+    slothSymbol       .setFillColor(sf::Color(82, 39, 25));    // inverted Light Blue
+    evilSymbol        .setFillColor(sf::Color(255, 255, 255)); // inverted Black
+
+    prideSymbol       .setStyle(sf::Text::Bold);
+    greedSymbol       .setStyle(sf::Text::Bold);
+    envySymbol        .setStyle(sf::Text::Bold);
+    wrathSymbol       .setStyle(sf::Text::Bold);
+    lustSymbol        .setStyle(sf::Text::Bold);
+    gluttonySymbol    .setStyle(sf::Text::Bold);
+    slothSymbol       .setStyle(sf::Text::Bold);
+    evilSymbol        .setStyle(sf::Text::Bold);
+
+
+    Button evilButton     (evilSymbol);
+    Button prideButton    (prideSymbol);
+    Button wrathButton    (wrathSymbol);
+    Button greedButton    (greedSymbol);
+    Button lustButton     (lustSymbol);
+    Button envyButton     (envySymbol);
+    Button gluttonyButton (gluttonySymbol);
+    Button slothButton    (slothSymbol);
+
+    evilButton     .setFillColor((sf::Color::Black));
+    prideButton    .setFillColor(sf::Color(127, 0, 255)); // Violet
+    wrathButton    .setFillColor(sf::Color::Red);
+    greedButton    .setFillColor(sf::Color::Yellow);
+    lustButton     .setFillColor(sf::Color::Blue);
+    envyButton     .setFillColor(sf::Color::Green);
+    gluttonyButton .setFillColor(sf::Color(255, 165, 0)); // Orange
+    slothButton    .setFillColor(sf::Color(173, 216, 230)); // Light Blue
+
+    float sizeOfButtons = 100.f;
+
+    evilButton      .setSize(sizeOfButtons, sizeOfButtons);
+    prideButton     .setSize(sizeOfButtons, sizeOfButtons);
+    wrathButton     .setSize(sizeOfButtons, sizeOfButtons);
+    greedButton     .setSize(sizeOfButtons, sizeOfButtons);
+    lustButton      .setSize(sizeOfButtons, sizeOfButtons);
+    envyButton      .setSize(sizeOfButtons, sizeOfButtons);
+    gluttonyButton  .setSize(sizeOfButtons, sizeOfButtons);
+    slothButton     .setSize(sizeOfButtons, sizeOfButtons);
+
+    sf::Vector2f startPositionOfButtons {225.f, 225.f};
+
+    float gapBetweenButtons = 50.f;
+    
+    prideButton     .setPosition(startPositionOfButtons.x, 
+                                 startPositionOfButtons.y);
+
+    evilButton      .setPosition(sizeOfButtons + gapBetweenButtons + startPositionOfButtons.x,
+                                 startPositionOfButtons.y);
+
+    wrathButton     .setPosition(2.f * sizeOfButtons + 2.f * gapBetweenButtons + startPositionOfButtons.x,
+                                 startPositionOfButtons.y);
+
+
+    greedButton     .setPosition(startPositionOfButtons.x,
+                                 sizeOfButtons + gapBetweenButtons + startPositionOfButtons.y);
+
+    lustButton      .setPosition(2.f * sizeOfButtons + 2.f * gapBetweenButtons + startPositionOfButtons.x,
+                                 sizeOfButtons + gapBetweenButtons + startPositionOfButtons.y);
+
+
+    envyButton      .setPosition(startPositionOfButtons.x,
+                                 2.f * sizeOfButtons + 2.f * gapBetweenButtons + startPositionOfButtons.y);
+
+    gluttonyButton  .setPosition(sizeOfButtons + gapBetweenButtons + startPositionOfButtons.x,
+                                 2.f * sizeOfButtons + 2.f * gapBetweenButtons + startPositionOfButtons.y);
+
+    slothButton     .setPosition(2.f * sizeOfButtons + 2.f * gapBetweenButtons + startPositionOfButtons.x,
+                                 2.f * sizeOfButtons + 2.f * gapBetweenButtons + startPositionOfButtons.y);
+
+
+    sf::RenderWindow window(sf::VideoMode(900, 900), "My window");
+
+    window.setVerticalSyncEnabled(true);
 
     /*
 
@@ -71,25 +174,11 @@ int main()
     //sf::RectangleShape rectangle(sf::Vector2f(50, 50));
     //rectangle.setFillColor(sf::Color(255, 0, 255, 128));
 
-    Button button(text2);
-    button.setPosition(sf::Vector2f(200.f, 100.f));
-
-    Button button2(text);
-    button2.setPosition(sf::Vector2f(100.f, 100.f));
-
     sf::Vector2f localCursorPosition{};
-
-    sf::FloatRect buttonBounds = button.getGlobalBounds();
-
-    sf::RectangleShape rectangle(sf::Vector2f(buttonBounds.width, buttonBounds.height));
-    rectangle.setFillColor(sf::Color(255, 0, 0, 128));
 
     // run the program as long as the window is open
     while (window.isOpen())
     {
-        buttonBounds = button.getGlobalBounds();
-        rectangle.setSize(sf::Vector2f(buttonBounds.width, buttonBounds.height));
-
         // check all the window's events that were triggered since the last iteration of the loop
         sf::Event event;
         while (window.pollEvent(event))
@@ -107,18 +196,18 @@ int main()
                     localCursorPosition.x = sf::Mouse::getPosition(window).x;
                     localCursorPosition.y = sf::Mouse::getPosition(window).y;
 
-                    if (button.getGlobalBounds().contains(localCursorPosition))
+                    if (evilButton.getGlobalBounds().contains(localCursorPosition))
                     {
-                        if (button.getFillColor() == button.m_baseButtonColor)
+                        if (evilButton.getFillColor() == evilButton.m_baseButtonColor)
                         {
-                            button.setFillColor(sf::Color(255, 255, 0, 128));
+                            
                         }
                     }
                     else
                     {
-                        if (button.getFillColor() != button.m_baseButtonColor)
+                        if (evilButton.getFillColor() != evilButton.m_baseButtonColor)
                         {
-                            button.setFillColor(button.m_baseButtonColor);
+                            
                         }
                     }
 
@@ -134,8 +223,6 @@ int main()
                 case sf::Event::LostFocus:
 
                     std::cout << "LostFocus " << std::endl;
-
-                    button.setButtonText(text2);
 
                     break;
 
@@ -153,26 +240,6 @@ int main()
                     break;
 
                 case sf::Event::KeyPressed:
-
-                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
-                    {
-                        button.move(0, -10);
-                    }
-                    else
-                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-                    {
-                        button.move(-10, 0);
-                    }
-                    else
-                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
-                    {
-                        button.move(0, 10);
-                    }
-                    else
-                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-                    {
-                        button.move(10, 0);
-                    }
 
                     break;
 
@@ -199,7 +266,6 @@ int main()
                         std::cout << "mouse x: " << event.mouseButton.x << std::endl;
                         std::cout << "mouse y: " << event.mouseButton.y << std::endl;
 
-                        button.setSize(sf::Vector2f(200.f, 100.f));
                     }
 
                     break;
@@ -207,8 +273,6 @@ int main()
                 case sf::Event::MouseEntered:
 
                     std::cout << "the mouse cursor has entered the window" << std::endl;
-
-                    sf::Mouse::setPosition(sf::Vector2i(250, 250), window);
 
                     break;
 
@@ -229,24 +293,29 @@ int main()
 
         window.clear(sf::Color::Black);
 
-        //window.draw(text);
+        window.draw(evilButton);
+        window.draw(evilButton.getButtonText());
 
+        window.draw(prideButton);
+        window.draw(prideButton.getButtonText());
 
+        window.draw(wrathButton);
+        window.draw(wrathButton.getButtonText());
 
-        //window.draw(rectangle2);
+        window.draw(greedButton);
+        window.draw(greedButton.getButtonText());
 
+        window.draw(lustButton);
+        window.draw(lustButton.getButtonText());
 
+        window.draw(envyButton);
+        window.draw(envyButton.getButtonText());
 
+        window.draw(gluttonyButton);
+        window.draw(gluttonyButton.getButtonText());
 
-
-        window.draw(button);
-        window.draw(button.getButtonText());
-
-        window.draw(button2);
-        window.draw(button2.getButtonText());
-
-        window.draw(rectangle);
-
+        window.draw(slothButton);
+        window.draw(slothButton.getButtonText());
         window.display();
 
     }

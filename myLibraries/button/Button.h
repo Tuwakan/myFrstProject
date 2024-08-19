@@ -28,8 +28,6 @@ public:
     {
     }
 
-    bool isInBoundOfButton(const sf::Vector2f &position);
-
     void move(float offsetX, float offsetY);
 
     void setButtonText(const sf::Text &text);
@@ -44,6 +42,8 @@ public:
     void setPosition(const sf::Vector2f &position);
 
     void setSize(const sf::Vector2f &size);
+
+    void setSize(float x, float y);
 };
 
 #endif // BUTTON_H

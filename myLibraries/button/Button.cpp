@@ -18,7 +18,7 @@ Button::Button(const sf::String &buttonName)
 
         if (!m_font->loadFromFile("D:\\resources\\consolab.ttf"))
         {
-            std::cout << "!m_font.loadFromFile(\"arial.ttf\")" << std::endl;
+            std::cout << "!m_font.loadFromFile(\"consolab.ttf\")" << std::endl;
         }
 
         m_buttonText.setFont(*m_font);
@@ -34,39 +34,21 @@ Button::Button(const sf::String &buttonName)
         m_font = nullptr;
     }
 
-bool Button::isInBoundOfButton(const sf::Vector2f &position)
-    {
-        if (position.x > sf::RectangleShape::getPosition().x
-            &&
-            position.y > sf::RectangleShape::getPosition().y
-            &&
-            position.x < sf::RectangleShape::getPosition().x + sf::RectangleShape::getSize().x
-            &&
-            position.y < sf::RectangleShape::getPosition().y + sf::RectangleShape::getSize().y)
-        {
-            return true;
-        }
-
-        return false;
-    }
-
 void Button::initSizeOfButtonText()
     {
         sf::FloatRect boundingBoxOfButtonText = m_buttonText.getGlobalBounds();
 
-        m_buttonText.setPosition(-boundingBoxOfButtonText.width / 2, -boundingBoxOfButtonText.height);
+        m_buttonText.setPosition(-boundingBoxOfButtonText.width / 2 - 2, -boundingBoxOfButtonText.height + 12);
 
-        m_sizeOfText.x = boundingBoxOfButtonText.width * 1.3;
+        m_sizeOfText.x = boundingBoxOfButtonText.width + 10;
         m_sizeOfText.y = boundingBoxOfButtonText.height * 1.3;
     }
 
 void Button::resizeButton(const sf::Vector2f &size)
     {
-        const sf::Vector2f buttonSize = sf::RectangleShape::getSize();
-
-        if (buttonSize.x < m_sizeOfText.x
-            &&
-            buttonSize.y < m_sizeOfText.y)
+        if (size.x <= m_sizeOfText.x
+            ||
+            size.y <= m_sizeOfText.y)
         {
             sf::RectangleShape::setSize(m_sizeOfText);
         }
@@ -85,7 +67,9 @@ void Button::move(float offsetX, float offsetY)
     {
         sf::RectangleShape::move(offsetX, offsetY);
 
-        m_buttonText.move(offsetX, offsetY);
+        const sf::Vector2f buttonOrigin = m_buttonText.getOrigin();
+
+        m_buttonText.setOrigin(buttonOrigin.x - offsetX, buttonOrigin.y - offsetY);
     }
 
 void Button::setButtonText(const sf::Text &text)
@@ -109,10 +93,22 @@ void Button::setPosition(const sf::Vector2f &position)
         m_buttonText.setOrigin(-position - sf::RectangleShape::getSize() / 2.f);
     }
 
+void Button::setPosition(float x, float y)
+    {
+        sf::RectangleShape::setPosition(x, y);
+
+        sf::Vector2f newOrigin;
+
+        newOrigin.x = -x - sf::RectangleShape::getSize().x / 2;
+        newOrigin.y = -y - sf::RectangleShape::getSize().y / 2;
+
+        m_buttonText.setOrigin(newOrigin);
+    }
+
 void Button::setSize(const sf::Vector2f &size)
     {
         if (size.x <= m_sizeOfText.x
-            &&
+            ||
             size.y <= m_sizeOfText.y)
         {
             return;
@@ -121,3 +117,7 @@ void Button::setSize(const sf::Vector2f &size)
         resizeButton(size);
     }
 
+void Button::setSize(float x, float y)
+    {
+        Button::setSize(sf::Vector2f(x, y));
+    }
