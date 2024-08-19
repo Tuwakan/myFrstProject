@@ -1,0 +1,12 @@
+add_library(Button Button.cpp)
+
+target_link_libraries(Button PRIVATE sfml-graphics compiler_flags)
+
+target_include_directories(Button PUBLIC
+                          "${PROJECT_BINARY_DIR}"
+                          "${PROJECT_SOURCE_DIR}/myLibraries/button"
+                          )
+
+
+                           
+target_link_libraries(Button PUBLIC compiler_flags)

@@ -30,6 +30,8 @@ public:
 
     bool isInBoundOfButton(const sf::Vector2f &position);
 
+    void move(float offsetX, float offsetY);
+
     void setButtonText(const sf::Text &text);
 
     sf::Text& getButtonText()

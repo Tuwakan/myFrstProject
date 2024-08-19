@@ -5,7 +5,7 @@
 //#include <thread>
 //#include <mutex>
 
-#include "Button.h"
+#include <Button.h>
 
 int main()
 {
@@ -27,7 +27,7 @@ int main()
 
     sf::Text text2;
     text2.setFont(font);
-    text2.setString("CUM");
+    text2.setString("CU\nM");
     text2.setCharacterSize(40);
     text2.setFillColor(sf::Color::Green);
 
@@ -154,18 +154,24 @@ int main()
 
                 case sf::Event::KeyPressed:
 
-                    if (event.key.scancode == sf::Keyboard::Scan::Escape)
+                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
                     {
-                        std::cout << "the escape key was pressed" << std::endl;
-                        std::cout << "scancode: " << event.key.scancode << std::endl;
-                        std::cout << "code: " << event.key.code << std::endl;
-                        std::cout << "control: " << event.key.control << std::endl;
-                        std::cout << "alt: " << event.key.alt << std::endl;
-                        std::cout << "shift: " << event.key.shift << std::endl;
-                        std::cout << "system: " << event.key.system << std::endl;
-                        std::cout << "description: " << sf::Keyboard::getDescription(event.key.scancode).toAnsiString() << std::endl;
-                        std::cout << "localize: " << sf::Keyboard::localize(event.key.scancode) << std::endl;
-                        std::cout << "delocalize: " << sf::Keyboard::delocalize(event.key.code) << std::endl;
+                        button.move(0, -10);
+                    }
+                    else
+                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+                    {
+                        button.move(-10, 0);
+                    }
+                    else
+                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+                    {
+                        button.move(0, 10);
+                    }
+                    else
+                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+                    {
+                        button.move(10, 0);
                     }
 
                     break;

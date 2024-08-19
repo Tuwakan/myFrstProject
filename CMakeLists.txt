@@ -10,10 +10,23 @@ FetchContent_Declare(SFML
     GIT_TAG 2.6.x)
 FetchContent_MakeAvailable(SFML)
 
+add_library(compiler_flags INTERFACE)
+target_compile_features(compiler_flags INTERFACE cxx_std_17)
+
+
+
 add_executable(main src/main.cpp)
-add_executable(cum src/Button.cpp)
-add_library(Button src/Button.h)
+
+add_subdirectory(myLibraries/button)
+
+target_link_libraries(main PUBLIC Button)
+
+target_include_directories(main PUBLIC
+                          "${CMAKE_CURRENT_SOURCE_DIR}/myLibraries/button/"
+                          )
+
 target_link_libraries(main PRIVATE sfml-graphics)
+
 target_compile_features(main PRIVATE cxx_std_17)
 
 if(WIN32)

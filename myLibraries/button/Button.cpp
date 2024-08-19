@@ -1,7 +1,7 @@
-#include "Button.h"
 
 #include <SFML/Graphics.hpp>
-#include <iostream>
+
+#include <Button.h>
 
 Button::Button(const sf::Text &buttonText)
     : RectangleShape()
@@ -79,6 +79,13 @@ void Button::resizeButton(const sf::Vector2f &size)
 
         m_buttonText.setOrigin((-sf::RectangleShape::getSize().x / 2.f) - buttonPosition.x,
                                (-sf::RectangleShape::getSize().y / 2.f) - buttonPosition.y);
+    }
+
+void Button::move(float offsetX, float offsetY)
+    {
+        sf::RectangleShape::move(offsetX, offsetY);
+
+        m_buttonText.move(offsetX, offsetY);
     }
 
 void Button::setButtonText(const sf::Text &text)
