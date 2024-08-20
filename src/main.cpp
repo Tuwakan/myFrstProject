@@ -7,6 +7,22 @@
 
 #include <Button.h>
 
+
+enum Symbol
+{
+    EVIL,
+    PRIDE,
+    WRATH,
+    GREED,
+    LUST,
+    ENVY,
+    GLUTTONY,
+    SLOTH,
+    MAX_OF_SYMBOLS
+};
+
+sf::Font Button::m_allButtonsFont;
+
 int main()
 {
     sf::Font font;
@@ -15,119 +31,97 @@ int main()
         std::cout << "!font.loadFromFile(\"msgothic.ttc\")" << std::endl;
     }
 
-    sf::Text prideSymbol;
-    sf::Text greedSymbol;
-    sf::Text envySymbol;
-    sf::Text wrathSymbol;
-    sf::Text lustSymbol;
-    sf::Text gluttonySymbol;
-    sf::Text slothSymbol;
-    sf::Text evilSymbol;
+    Button::setFontForAllButtons(font);
 
-    prideSymbol       .setFont(font);
-    greedSymbol       .setFont(font);
-    envySymbol        .setFont(font);
-    wrathSymbol       .setFont(font);
-    lustSymbol        .setFont(font);
-    gluttonySymbol    .setFont(font);
-    slothSymbol       .setFont(font);
-    evilSymbol        .setFont(font);
+    const std::vector<sf::String> symbolVector 
+    {
+        L"悪", // evil
+        L"慢", // pride
+        L"怒", // wrath
+        L"欲", // greed
+        L"情", // lust
+        L"妬", // envy
+        L"飢", // gluttony
+        L"怠"  // sloth
+    };
 
-    prideSymbol       .setString(L"慢");
-    greedSymbol       .setString(L"欲");
-    envySymbol        .setString(L"妬");
-    wrathSymbol       .setString(L"怒");
-    lustSymbol        .setString(L"情");
-    gluttonySymbol    .setString(L"飢");
-    slothSymbol       .setString(L"怠");
-    evilSymbol        .setString(L"悪");
+    const std::vector<sf::Color> colorVector 
+    {
+        sf::Color::Black,
+        sf::Color(127, 0, 255),   // Violet
+        sf::Color::Red,
+        sf::Color::Yellow,
+        sf::Color::Blue,
+        sf::Color::Green,
+        sf::Color(255, 165, 0),   // Orange
+        sf::Color(173, 216, 230), // Light Blue
 
-    prideSymbol       .setCharacterSize(50);
-    greedSymbol       .setCharacterSize(50);
-    envySymbol        .setCharacterSize(50);
-    wrathSymbol       .setCharacterSize(50);
-    lustSymbol        .setCharacterSize(50);
-    gluttonySymbol    .setCharacterSize(50);
-    slothSymbol       .setCharacterSize(50);
-    evilSymbol        .setCharacterSize(50);
+    };
 
-    prideSymbol       .setFillColor(sf::Color(128, 255, 0));   // inverted Violet
-    greedSymbol       .setFillColor(sf::Color(0, 0, 255));     // inverted Yellow
-    envySymbol        .setFillColor(sf::Color(255, 0, 255));   // inverted Green
-    wrathSymbol       .setFillColor(sf::Color(0, 255, 255));   // inverted Red
-    lustSymbol        .setFillColor(sf::Color(255, 255, 0));   // inverted Blue
-    gluttonySymbol    .setFillColor(sf::Color(0, 90, 255));    // inverted Orange
-    slothSymbol       .setFillColor(sf::Color(82, 39, 25));    // inverted Light Blue
-    evilSymbol        .setFillColor(sf::Color(255, 255, 255)); // inverted Black
-
-    prideSymbol       .setStyle(sf::Text::Bold);
-    greedSymbol       .setStyle(sf::Text::Bold);
-    envySymbol        .setStyle(sf::Text::Bold);
-    wrathSymbol       .setStyle(sf::Text::Bold);
-    lustSymbol        .setStyle(sf::Text::Bold);
-    gluttonySymbol    .setStyle(sf::Text::Bold);
-    slothSymbol       .setStyle(sf::Text::Bold);
-    evilSymbol        .setStyle(sf::Text::Bold);
-
-
-    Button evilButton     (evilSymbol);
-    Button prideButton    (prideSymbol);
-    Button wrathButton    (wrathSymbol);
-    Button greedButton    (greedSymbol);
-    Button lustButton     (lustSymbol);
-    Button envyButton     (envySymbol);
-    Button gluttonyButton (gluttonySymbol);
-    Button slothButton    (slothSymbol);
-
-    evilButton     .setFillColor((sf::Color::Black));
-    prideButton    .setFillColor(sf::Color(127, 0, 255)); // Violet
-    wrathButton    .setFillColor(sf::Color::Red);
-    greedButton    .setFillColor(sf::Color::Yellow);
-    lustButton     .setFillColor(sf::Color::Blue);
-    envyButton     .setFillColor(sf::Color::Green);
-    gluttonyButton .setFillColor(sf::Color(255, 165, 0)); // Orange
-    slothButton    .setFillColor(sf::Color(173, 216, 230)); // Light Blue
+    const std::vector<sf::Color> invertedColorVector 
+    {
+        sf::Color::White,       // inverted Black
+        sf::Color(128, 255, 0), // inverted Violet
+        sf::Color(0, 255, 255), // inverted Red
+        sf::Color(0, 0, 255),   // inverted Yellow
+        sf::Color(255, 255, 0), // inverted Blue
+        sf::Color(255, 0, 255), // inverted Green
+        sf::Color(0, 90, 255),  // inverted Orange
+        sf::Color(82, 39, 25),  // inverted Light Blue
+    };
+    
+    std::cout << "int main()" << std::endl;
+    
+    std::vector<Button> buttonVector;
 
     float sizeOfButtons = 100.f;
 
-    evilButton      .setSize(sizeOfButtons, sizeOfButtons);
-    prideButton     .setSize(sizeOfButtons, sizeOfButtons);
-    wrathButton     .setSize(sizeOfButtons, sizeOfButtons);
-    greedButton     .setSize(sizeOfButtons, sizeOfButtons);
-    lustButton      .setSize(sizeOfButtons, sizeOfButtons);
-    envyButton      .setSize(sizeOfButtons, sizeOfButtons);
-    gluttonyButton  .setSize(sizeOfButtons, sizeOfButtons);
-    slothButton     .setSize(sizeOfButtons, sizeOfButtons);
+    // creating and initialization Buttons and Buttons Text
+    for (size_t symbolCode {};
+         symbolCode < Symbol::MAX_OF_SYMBOLS;
+         ++symbolCode)
+    {
+        Button button (symbolVector[symbolCode]);
+
+        button.setSize(sizeOfButtons, sizeOfButtons);
+        button.setFillColor(colorVector[symbolCode]);
+        button.setTextColor(invertedColorVector[symbolCode]);
+
+        buttonVector.push_back(button);
+
+        //delete button;
+        //button = nullptr;
+    };
 
     sf::Vector2f startPositionOfButtons {250.f, 250.f};
 
     float gapBetweenButtons = 50.f;
 
-    prideButton     .setPosition(startPositionOfButtons.x, 
-                                 startPositionOfButtons.y);
+    buttonVector[Symbol::PRIDE]     .setPosition(startPositionOfButtons.x, 
+                                                 startPositionOfButtons.y);
 
-    evilButton      .setPosition(sizeOfButtons + gapBetweenButtons + startPositionOfButtons.x,
-                                 startPositionOfButtons.y);
+    buttonVector[Symbol::EVIL]      .setPosition(sizeOfButtons + gapBetweenButtons + startPositionOfButtons.x,
+                                                 startPositionOfButtons.y);
 
-    wrathButton     .setPosition(2.f * sizeOfButtons + 2.f * gapBetweenButtons + startPositionOfButtons.x,
-                                 startPositionOfButtons.y);
-
-
-    greedButton     .setPosition(startPositionOfButtons.x,
-                                 sizeOfButtons + gapBetweenButtons + startPositionOfButtons.y);
-
-    lustButton      .setPosition(2.f * sizeOfButtons + 2.f * gapBetweenButtons + startPositionOfButtons.x,
-                                 sizeOfButtons + gapBetweenButtons + startPositionOfButtons.y);
+    buttonVector[Symbol::WRATH]     .setPosition(2.f * sizeOfButtons + 2.f * gapBetweenButtons + startPositionOfButtons.x,
+                                                 startPositionOfButtons.y);
 
 
-    envyButton      .setPosition(startPositionOfButtons.x,
-                                 2.f * sizeOfButtons + 2.f * gapBetweenButtons + startPositionOfButtons.y);
+    buttonVector[Symbol::GREED]     .setPosition(startPositionOfButtons.x,
+                                                 sizeOfButtons + gapBetweenButtons + startPositionOfButtons.y);
 
-    slothButton     .setPosition(sizeOfButtons + gapBetweenButtons + startPositionOfButtons.x,
-                                 2.f * sizeOfButtons + 2.f * gapBetweenButtons + startPositionOfButtons.y);
+    buttonVector[Symbol::LUST]      .setPosition(2.f * sizeOfButtons + 2.f * gapBetweenButtons + startPositionOfButtons.x,
+                                                 sizeOfButtons + gapBetweenButtons + startPositionOfButtons.y);
 
-    gluttonyButton  .setPosition(2.f * sizeOfButtons + 2.f * gapBetweenButtons + startPositionOfButtons.x,
-                                 2.f * sizeOfButtons + 2.f * gapBetweenButtons + startPositionOfButtons.y);
+
+    buttonVector[Symbol::ENVY]      .setPosition(startPositionOfButtons.x,
+                                                 2.f * sizeOfButtons + 2.f * gapBetweenButtons + startPositionOfButtons.y);
+
+    buttonVector[Symbol::SLOTH]     .setPosition(sizeOfButtons + gapBetweenButtons + startPositionOfButtons.x,
+                                                 2.f * sizeOfButtons + 2.f * gapBetweenButtons + startPositionOfButtons.y);
+
+    buttonVector[Symbol::GLUTTONY]  .setPosition(2.f * sizeOfButtons + 2.f * gapBetweenButtons + startPositionOfButtons.x,
+                                                 2.f * sizeOfButtons + 2.f * gapBetweenButtons + startPositionOfButtons.y);
 
 
     sf::RenderWindow window(sf::VideoMode(900, 900), "My window");
@@ -173,6 +167,11 @@ int main()
 
     sf::Vector2f localCursorPosition{};
 
+    Button button ("F");
+
+    std::cout << static_cast<std::string>(button.getButtonText().getString()) << std::endl;
+    std::cout << button.getButtonText().getFont()->getInfo().family << std::endl;
+
     // run the program as long as the window is open
     while (window.isOpen())
     {
@@ -192,21 +191,6 @@ int main()
 
                     localCursorPosition.x = sf::Mouse::getPosition(window).x;
                     localCursorPosition.y = sf::Mouse::getPosition(window).y;
-
-                    if (evilButton.getGlobalBounds().contains(localCursorPosition))
-                    {
-                        if (evilButton.getFillColor() == evilButton.m_baseButtonColor)
-                        {
-                            
-                        }
-                    }
-                    else
-                    {
-                        if (evilButton.getFillColor() != evilButton.m_baseButtonColor)
-                        {
-                            
-                        }
-                    }
 
                     break;
 
@@ -287,33 +271,15 @@ int main()
                     break;
             }
         }
-
+        
         window.clear(sf::Color::Black);
 
-        window.draw(evilButton);
-        window.draw(evilButton.getButtonText());
-
-        window.draw(prideButton);
-        window.draw(prideButton.getButtonText());
-
-        window.draw(wrathButton);
-        window.draw(wrathButton.getButtonText());
-
-        window.draw(greedButton);
-        window.draw(greedButton.getButtonText());
-
-        window.draw(lustButton);
-        window.draw(lustButton.getButtonText());
-
-        window.draw(envyButton);
-        window.draw(envyButton.getButtonText());
-
-        window.draw(gluttonyButton);
-        window.draw(gluttonyButton.getButtonText());
-
-        window.draw(slothButton);
-        window.draw(slothButton.getButtonText());
-
+        for(Button &button : buttonVector)
+        {
+            window.draw(button);
+            window.draw(button.getButtonText());
+        }
+        
         window.display();
 
     }

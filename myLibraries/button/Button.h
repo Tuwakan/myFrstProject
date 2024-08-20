@@ -8,11 +8,13 @@ class Button : public sf::RectangleShape
 {
 private:
 
-    sf::Vector2f m_sizeOfText;
+    static sf::Font m_allButtonsFont;
+
+    sf::Vector2f m_minimalSizeOfButton;
 
     sf::Text m_buttonText;
 
-    void initSizeOfButtonText();
+    sf::Vector2f initMinimalSizeButtonOutOfTextSizeThatIsCreatedFromString(const sf::String &buttonString);
 
     void resizeButton(const sf::Vector2f &size);
 
@@ -20,9 +22,7 @@ public:
 
     sf::Color m_baseButtonColor = sf::Color(255, 255, 255, 128);
 
-    Button(const sf::Text &buttonText);
-
-    Button(const sf::String &buttonName = "NONE");
+    Button(const sf::String &buttonName = "N");
 
     virtual ~Button()
     {
@@ -30,11 +30,21 @@ public:
 
     void move(float offsetX, float offsetY);
 
-    void setButtonText(const sf::Text &text);
+    static void setFontForAllButtons(const sf::Font &font)
+    {
+        Button::m_allButtonsFont = font;
+    }
 
-    sf::Text& getButtonText()
+    void setButtonString(const sf::String &buttonString);
+
+    const sf::Text& getButtonText()
     {
         return m_buttonText;
+    }
+
+    void setTextColor(const sf::Color &color)
+    {
+        m_buttonText.setFillColor(color);
     }
 
     void setPosition(float x, float y);

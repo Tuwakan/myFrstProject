@@ -3,58 +3,60 @@
 
 #include <Button.h>
 
-Button::Button(const sf::Text &buttonText)
+
+
+Button::Button(const sf::String &buttonString)
     : RectangleShape()
     {
-        setButtonText(buttonText);
+        
+        // initialize the |m_buttonText| variable of the object with given sf::String
+        // and setting minimal button size, aka size of displaying text
+        m_minimalSizeOfButton = initMinimalSizeButtonOutOfTextSizeThatIsCreatedFromString(buttonString);
+        
+
+        resizeButton(m_minimalSizeOfButton);
 
         sf::RectangleShape::setFillColor(m_baseButtonColor);
+
+        
     }
 
-Button::Button(const sf::String &buttonName)
-    : RectangleShape()
+sf::Vector2f Button::initMinimalSizeButtonOutOfTextSizeThatIsCreatedFromString(const sf::String &buttonString)
     {
-        sf::Font *m_font = new sf::Font();
 
-        if (!m_font->loadFromFile("D:\\resources\\consolab.ttf"))
-        {
-            std::cout << "!m_font.loadFromFile(\"consolab.ttf\")" << std::endl;
-        }
+        m_buttonText.setFont(m_allButtonsFont);
+        m_buttonText.setString(buttonString);
+        m_buttonText.setCharacterSize(50);
+        m_buttonText.setStyle(sf::Text::Bold);
 
-        m_buttonText.setFont(*m_font);
-        m_buttonText.setString(buttonName);
-        m_buttonText.setCharacterSize(10);
-        m_buttonText.setFillColor(sf::Color::Red);
-
-        initSizeOfButtonText();
-
-        resizeButton(m_sizeOfText);
-
-        delete m_font;
-        m_font = nullptr;
-    }
-
-void Button::initSizeOfButtonText()
-    {
         sf::FloatRect boundingBoxOfButtonText = m_buttonText.getGlobalBounds();
 
-        m_buttonText.setPosition(-boundingBoxOfButtonText.width / 2 - 2, -boundingBoxOfButtonText.height + 12);
+        // setting position of displayed text to the center of its Origins (tf::Text.setOrigins()),
+        // its needed to position displayed text in the center of button -
+        // top left corner of bound box is origin, and this point of bound box will be always in center of displayed text
+        m_buttonText.setPosition(-boundingBoxOfButtonText.width / 2, -boundingBoxOfButtonText.height + 15);
 
-        m_sizeOfText.x = boundingBoxOfButtonText.width + 10;
-        m_sizeOfText.y = boundingBoxOfButtonText.height * 1.3;
+        sf::Vector2f minimalSizeOfButton;
+
+        // correcting size of displayed text, because 
+        // |m_buttonText.getGlobalBounds()| does not give bound box that cover all the text
+        minimalSizeOfButton.x = boundingBoxOfButtonText.width + 10;
+        minimalSizeOfButton.y = boundingBoxOfButtonText.height * 1.3;
+
+        return minimalSizeOfButton;
     }
 
-void Button::resizeButton(const sf::Vector2f &size)
+void Button::resizeButton(const sf::Vector2f &sizeToSet)
     {
-        if (size.x <= m_sizeOfText.x
+        if (sizeToSet.x <= m_minimalSizeOfButton.x
             ||
-            size.y <= m_sizeOfText.y)
+            sizeToSet.y <= m_minimalSizeOfButton.y)
         {
-            sf::RectangleShape::setSize(m_sizeOfText);
+            sf::RectangleShape::setSize(m_minimalSizeOfButton);
         }
         else
         {
-            sf::RectangleShape::setSize(size);
+            sf::RectangleShape::setSize(sizeToSet);
         }
 
         sf::Vector2f buttonPosition = sf::RectangleShape::getPosition();
@@ -72,18 +74,18 @@ void Button::move(float offsetX, float offsetY)
         m_buttonText.setOrigin(buttonOrigin.x - offsetX, buttonOrigin.y - offsetY);
     }
 
-void Button::setButtonText(const sf::Text &text)
+void Button::setButtonString(const sf::String &buttonString)
     {
-        if (text.getString() == m_buttonText.getString())
+        if (buttonString == m_buttonText.getString())
         {
             return;
         }
 
-        m_buttonText = text;
+        // initialize the |m_buttonText| variable of the object with given sf::String
+        // and setting minimal button size, aka size of displaying text
+        m_minimalSizeOfButton = initMinimalSizeButtonOutOfTextSizeThatIsCreatedFromString(buttonString);
 
-        initSizeOfButtonText();
-
-        resizeButton(m_sizeOfText);
+        resizeButton(m_minimalSizeOfButton);
     }
 
 void Button::setPosition(const sf::Vector2f &position)
@@ -107,9 +109,9 @@ void Button::setPosition(float x, float y)
 
 void Button::setSize(const sf::Vector2f &size)
     {
-        if (size.x <= m_sizeOfText.x
+        if (size.x <= m_minimalSizeOfButton.x
             ||
-            size.y <= m_sizeOfText.y)
+            size.y <= m_minimalSizeOfButton.y)
         {
             return;
         }
