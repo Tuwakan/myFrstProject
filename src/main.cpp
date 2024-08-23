@@ -98,6 +98,7 @@ int main()
         button.setSize(sizeOfButtons, sizeOfButtons);
         button.setFillColor(colorVector[symbolCode]);
         button.setTextColor(invertedColorVector[symbolCode]);
+        button.setOutlineColor(outlineColorVector[symbolCode]);
 
         buttonVector.push_back(button);
 
@@ -143,16 +144,52 @@ int main()
     sf::Vector2f localCursorPosition{};
     sf::FloatRect buttonBoundingBox;
 
-    bool isOutlineSwitched = true;
+    bool isOutlineSwitched (true);
+    bool isButtonsAnimationInAction (false);
+
+    std::chrono::time_point<std::chrono::steady_clock> mainTimePoint = std::chrono::steady_clock::now();
+    uint8_t counterOfUnactiveAnimations {};
 
     // run the program as long as the window is open
     while (window.isOpen())
     {
+
+
+        if (isButtonsAnimationInAction)
+        {
+            for (size_t symbol{};
+                 symbol < Symbol::MAX_OF_SYMBOLS;
+                 ++symbol)
+            {   
+                if (buttonVector[symbol].m_isButtonInAnimation)
+                {
+                    if (std::chrono::steady_clock::now() - buttonVector[symbol].m_timePointForAnimation >= buttonVector[symbol].m_durationOfButtonAnimation)
+                    {
+                        buttonVector[symbol].swapColorsOfTextAndRectangle();
+
+                        buttonVector[symbol].m_isButtonInAnimation = false;
+                        
+                        counterOfUnactiveAnimations = 0;
+                    }
+                }
+                else
+                {
+                    counterOfUnactiveAnimations += 1;
+                }
+            } 
+            
+            if (counterOfUnactiveAnimations == 6)
+            {
+                isButtonsAnimationInAction = false;
+            }
+            
+        }
+
+
         // check all the window's events that were triggered since the last iteration of the loop
         sf::Event event;
         while (window.pollEvent(event))
         {
-
             switch (event.type)
             {
                 // window closed
@@ -165,8 +202,6 @@ int main()
                     localCursorPosition.x = sf::Mouse::getPosition(window).x;
                     localCursorPosition.y = sf::Mouse::getPosition(window).y;
                     
-
-
                     for (size_t symbol{};
                          symbol < Symbol::MAX_OF_SYMBOLS;
                          ++symbol)
@@ -180,7 +215,6 @@ int main()
                                 buttonVector[symbol].toggleButtonOutline();
                                 buttonVector[symbol].m_outlineToggle = true;
                             }
-                            
                         }
                         else
                         {
@@ -242,12 +276,28 @@ int main()
 
                 case sf::Event::MouseButtonPressed:
 
-                    if (event.mouseButton.button == sf::Mouse::Right)
+                    if (event.mouseButton.button == sf::Mouse::Left)
                     {
-                        std::cout << "the right button was pressed" << std::endl;
-                        std::cout << "mouse x: " << event.mouseButton.x << std::endl;
-                        std::cout << "mouse y: " << event.mouseButton.y << std::endl;
+                        for (size_t symbol{};
+                         symbol < Symbol::MAX_OF_SYMBOLS;
+                         ++symbol)
+                        {
+                            buttonBoundingBox = buttonVector[symbol].getGlobalBounds();
 
+                            if (buttonBoundingBox.contains(localCursorPosition))
+                            {
+                        
+                                if (!buttonVector[symbol].m_isButtonInAnimation)
+                                {
+                                    buttonVector[symbol].swapColorsOfTextAndRectangle();
+
+                                    buttonVector[symbol].m_timePointForAnimation = std::chrono::steady_clock::now();
+
+                                    buttonVector[symbol].m_isButtonInAnimation = true;
+                                    isButtonsAnimationInAction = true;
+                                }
+                            }
+                        }
                     }
 
                     break;

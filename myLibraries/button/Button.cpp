@@ -61,6 +61,13 @@ void Button::resizeButton(const sf::Vector2f &sizeToSet)
                                (-sf::RectangleShape::getSize().y / 2.f) - buttonPosition.y);
     }
 
+void Button::swapColorsOfTextAndRectangle()
+{
+    sf::Color tempColor = sf::RectangleShape::getFillColor();
+    sf::RectangleShape::setFillColor(m_buttonText.getFillColor());
+    m_buttonText.setFillColor(tempColor);
+}
+
 void Button::toggleButtonOutline()
 {
     if (m_needChangeOutlineState)

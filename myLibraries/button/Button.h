@@ -3,6 +3,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <chrono>
 
 class Button : public sf::RectangleShape
 {
@@ -26,18 +27,24 @@ public:
 
     sf::Color m_outlineColor;
 
+    bool m_isButtonInAnimation {false};
+    std::chrono::duration<long long, std::milli> m_durationOfButtonAnimation = std::chrono::milliseconds(200);
+    std::chrono::time_point<std::chrono::steady_clock> m_timePointForAnimation;
+
     Button(const sf::String &buttonName = "N");
 
     virtual ~Button()
     {
     }
 
+    void swapColorsOfTextAndRectangle();
+
+    void toggleButtonOutline();
+
     static void setFontForAllButtons(const sf::Font &font)
     {
         Button::m_allButtonsFont = font;
     }
-
-    void toggleButtonOutline();
 
     void setButtonString(const sf::String &buttonString);
 
