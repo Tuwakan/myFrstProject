@@ -69,6 +69,18 @@ int main()
         sf::Color(0, 90, 255),  // inverted Orange
         sf::Color(82, 39, 25),  // inverted Light Blue
     };
+
+    const std::vector<sf::Color> outlineColorVector
+    {
+        sf::Color(128, 128, 128), // Gray
+        sf::Color::White,   
+        sf::Color::White,
+        sf::Color::White,
+        sf::Color::White,
+        sf::Color::White,
+        sf::Color::White,   
+        sf::Color::White, 
+    };
     
     std::cout << "int main()" << std::endl;
     
@@ -127,50 +139,11 @@ int main()
     sf::RenderWindow window(sf::VideoMode(900, 900), "My window");
 
     window.setVerticalSyncEnabled(true);
-
-    /*
-
-    sf::FloatRect boundingBox = text.getGlobalBounds();
-    const sf::Vector2f textPosition = text.getPosition();
-
-    std::cout << "textPosition.x : " << textPosition.x << std::endl;
-    std::cout << "textPosition.y : " << textPosition.y << std::endl;
-
-    std::cout << "boundingBox.width : " << boundingBox.width << std::endl;
-    std::cout << "boundingBox.height : " << boundingBox.height << std::endl;
-
-    text.setOrigin(0, boundingBox.height / 2);
-
-    text.move(100.f, 100.f);
-
-    const sf::Vector2f textPosition2 = text.getPosition();
-
-    std::cout << "textPosition2.x : " << textPosition2.x << std::endl;
-    std::cout << "textPosition2.y : " << textPosition2.y << std::endl;
-
-    sf::RectangleShape rectangle(sf::Vector2f(boundingBox.width + 4, boundingBox.height + 3));
-    rectangle.setFillColor(sf::Color(255, 255, 255, 128));
-    //rectangle.setOrigin(-100.f, -100.f);
-    rectangle.move(textPosition2.x, textPosition2.y);
-
-    const sf::Vector2f textCharPosition = text.findCharacterPos(2);
-
-    sf::RectangleShape rectangle2(sf::Vector2f(textCharPosition.x, textCharPosition.y + boundingBox.height));
-    rectangle2.setFillColor(sf::Color(255, 255, 255, 128));
-
-    //text.setStyle(sf::Text::Bold | sf::Text::Underlined);
-    //text.setOrigin(sf::Vector2f(38.f, 15.f));
-    //text.move(sf::Vector2f(250.f, 250.f));
-    */
-
-    //Button button(sf::Vector2f(30.f, 20.f));
-
+    
     sf::Vector2f localCursorPosition{};
+    sf::FloatRect buttonBoundingBox;
 
-    Button button ("F");
-
-    std::cout << static_cast<std::string>(button.getButtonText().getString()) << std::endl;
-    std::cout << button.getButtonText().getFont()->getInfo().family << std::endl;
+    bool isOutlineSwitched = true;
 
     // run the program as long as the window is open
     while (window.isOpen())
@@ -191,6 +164,34 @@ int main()
 
                     localCursorPosition.x = sf::Mouse::getPosition(window).x;
                     localCursorPosition.y = sf::Mouse::getPosition(window).y;
+                    
+
+
+                    for (size_t symbol{};
+                         symbol < Symbol::MAX_OF_SYMBOLS;
+                         ++symbol)
+                    {
+                        buttonBoundingBox = buttonVector[symbol].getGlobalBounds();
+
+                        if (buttonBoundingBox.contains(localCursorPosition))
+                        {
+                            if (!buttonVector[symbol].m_outlineToggle)
+                            {
+                                buttonVector[symbol].toggleButtonOutline();
+                                buttonVector[symbol].m_outlineToggle = true;
+                            }
+                            
+                        }
+                        else
+                        {
+                            if (buttonVector[symbol].m_outlineToggle)
+                            {
+                                buttonVector[symbol].toggleButtonOutline();
+                                buttonVector[symbol].m_outlineToggle = false;
+                            }
+
+                        }
+                    }
 
                     break;
 

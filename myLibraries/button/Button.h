@@ -14,13 +14,17 @@ private:
 
     sf::Text m_buttonText;
 
+    bool m_needChangeOutlineState = true;
+
     sf::Vector2f initMinimalSizeButtonOutOfTextSizeThatIsCreatedFromString(const sf::String &buttonString);
 
     void resizeButton(const sf::Vector2f &size);
 
 public:
 
-    sf::Color m_baseButtonColor = sf::Color(255, 255, 255, 128);
+    bool m_outlineToggle;
+
+    sf::Color m_outlineColor;
 
     Button(const sf::String &buttonName = "N");
 
@@ -28,12 +32,12 @@ public:
     {
     }
 
-    void move(float offsetX, float offsetY);
-
     static void setFontForAllButtons(const sf::Font &font)
     {
         Button::m_allButtonsFont = font;
     }
+
+    void toggleButtonOutline();
 
     void setButtonString(const sf::String &buttonString);
 

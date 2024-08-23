@@ -15,10 +15,6 @@ Button::Button(const sf::String &buttonString)
         
 
         resizeButton(m_minimalSizeOfButton);
-
-        sf::RectangleShape::setFillColor(m_baseButtonColor);
-
-        
     }
 
 sf::Vector2f Button::initMinimalSizeButtonOutOfTextSizeThatIsCreatedFromString(const sf::String &buttonString)
@@ -65,14 +61,19 @@ void Button::resizeButton(const sf::Vector2f &sizeToSet)
                                (-sf::RectangleShape::getSize().y / 2.f) - buttonPosition.y);
     }
 
-void Button::move(float offsetX, float offsetY)
+void Button::toggleButtonOutline()
+{
+    if (m_needChangeOutlineState)
     {
-        sf::RectangleShape::move(offsetX, offsetY);
-
-        const sf::Vector2f buttonOrigin = m_buttonText.getOrigin();
-
-        m_buttonText.setOrigin(buttonOrigin.x - offsetX, buttonOrigin.y - offsetY);
+        sf::RectangleShape::setOutlineThickness(2.f);
+        m_needChangeOutlineState = !m_needChangeOutlineState;
     }
+    else
+    {
+        sf::RectangleShape::setOutlineThickness(0);
+        m_needChangeOutlineState = !m_needChangeOutlineState;
+    }
+}
 
 void Button::setButtonString(const sf::String &buttonString)
     {
