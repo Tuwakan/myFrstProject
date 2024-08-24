@@ -5,25 +5,30 @@
 
 
 
-Button::Button(const sf::String &buttonString)
+Button::Button(const sf::String &buttonString, const sf::Font &font)
     : RectangleShape()
     {
-        
+        m_buttonText.setCharacterSize(50);
+        m_buttonText.setStyle(sf::Text::Bold);
+
         // initialize the |m_buttonText| variable of the object with given sf::String
         // and setting minimal button size, aka size of displaying text
-        m_minimalSizeOfButton = initMinimalSizeButtonOutOfTextSizeThatIsCreatedFromString(buttonString);
+        m_minimalSizeOfButton = initMinimalSizeButtonOutOfTextSizeThatIsCreatedFromStringAndFont(buttonString, font);
         
-
         resizeButton(m_minimalSizeOfButton);
     }
 
-sf::Vector2f Button::initMinimalSizeButtonOutOfTextSizeThatIsCreatedFromString(const sf::String &buttonString)
-    {
+sf::Vector2f Button::initMinimalSizeButtonOutOfTextSizeThatIsCreatedFromStringAndFont(const sf::String &buttonString, const sf::Font &font)
+{
+    m_buttonText.setFont(font);
 
-        m_buttonText.setFont(m_allButtonsFont);
+    return initMinimalSizeButtonOutOfTextSizeThatIsCreatedFromString(buttonString);
+}
+
+sf::Vector2f Button::initMinimalSizeButtonOutOfTextSizeThatIsCreatedFromString(const sf::String &buttonString)
+    {   
+        
         m_buttonText.setString(buttonString);
-        m_buttonText.setCharacterSize(50);
-        m_buttonText.setStyle(sf::Text::Bold);
 
         sf::FloatRect boundingBoxOfButtonText = m_buttonText.getGlobalBounds();
 
@@ -80,6 +85,11 @@ void Button::toggleButtonOutline()
         sf::RectangleShape::setOutlineThickness(0);
         m_needChangeOutlineState = !m_needChangeOutlineState;
     }
+}
+
+void Button::shiftTextPosition(float x, float y)
+{
+    m_buttonText.move(x, y);
 }
 
 void Button::setButtonString(const sf::String &buttonString)

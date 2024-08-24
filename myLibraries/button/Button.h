@@ -9,8 +9,6 @@ class Button : public sf::RectangleShape
 {
 private:
 
-    static sf::Font m_allButtonsFont;
-
     sf::Vector2f m_minimalSizeOfButton;
 
     sf::Text m_buttonText;
@@ -18,12 +16,14 @@ private:
     bool m_needChangeOutlineState = true;
 
     sf::Vector2f initMinimalSizeButtonOutOfTextSizeThatIsCreatedFromString(const sf::String &buttonString);
+    sf::Vector2f initMinimalSizeButtonOutOfTextSizeThatIsCreatedFromStringAndFont(const sf::String &buttonString, const sf::Font &font);
+
 
     void resizeButton(const sf::Vector2f &size);
 
 public:
 
-    bool m_outlineToggle;
+    bool m_outlineToggle = false;
 
     sf::Color m_outlineColor;
 
@@ -31,7 +31,7 @@ public:
     std::chrono::duration<long long, std::milli> m_durationOfButtonAnimation = std::chrono::milliseconds(200);
     std::chrono::time_point<std::chrono::steady_clock> m_timePointForAnimation;
 
-    Button(const sf::String &buttonName = "N");
+    Button(const sf::String &buttonString, const sf::Font &font);
 
     virtual ~Button()
     {
@@ -41,16 +41,18 @@ public:
 
     void toggleButtonOutline();
 
-    static void setFontForAllButtons(const sf::Font &font)
-    {
-        Button::m_allButtonsFont = font;
-    }
+    void shiftTextPosition(float x, float y);
 
     void setButtonString(const sf::String &buttonString);
 
     const sf::Text& getButtonText()
     {
         return m_buttonText;
+    }
+
+    void setButtonFont(const sf::Font &font)
+    {
+        m_buttonText.setFont(font);
     }
 
     void setTextColor(const sf::Color &color)

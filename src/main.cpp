@@ -28,32 +28,37 @@ enum Symbol
     ENVY,
     GLUTTONY,
     SLOTH,
+    PLAY,
     MAX_OF_SYMBOLS
 };
 
-// definition of Button static member 
-sf::Font Button::m_allButtonsFont;
-
 int main()
 {
-    sf::Font font;
-    if (!font.loadFromFile("D:\\resources\\msgothic.ttc"))
+    sf::Font fontForJapanese;
+    if (!fontForJapanese.loadFromFile("C:\\Windows\\Fonts\\msgothic.ttc"))
     {
-        std::cout << "!font.loadFromFile(\"msgothic.ttc\")" << std::endl;
+        std::cout << "!fontForJapanese.loadFromFile(\"msgothic.ttc\")" << std::endl;
     }
 
-    Button::setFontForAllButtons(font);
+    sf::Font fontForSpecialChars;
+    if (!fontForSpecialChars.loadFromFile("C:\\Windows\\Fonts\\segmdl2.ttf"))
+    {
+        std::cout << "!fontForSpecialChars.loadFromFile(\"segmdl2.ttf\")" << std::endl;
+    }
+
+   // Button::setFontForAllButtons(font);
 
     const std::vector<sf::String> symbolVector 
     {
-        L"悪", // evil
-        L"慢", // pride
-        L"怒", // wrath
-        L"欲", // greed
-        L"情", // lust
-        L"妬", // envy
-        L"飢", // gluttony
-        L"怠"  // sloth
+        L"悪",    // evil
+        L"慢",    // pride
+        L"怒",    // wrath
+        L"欲",    // greed
+        L"情",    // lust
+        L"妬",    // envy
+        L"飢",    // gluttony
+        L"怠",     // sloth
+        L"\uE768" // play
     };
 
     const std::vector<sf::Color> colorVector 
@@ -66,19 +71,21 @@ int main()
         sf::Color::Green,
         sf::Color(255, 165, 0),   // Orange
         sf::Color(173, 216, 230), // Light Blue
+        sf::Color(6, 66, 18),      // dark dark green
 
     };
 
     const std::vector<sf::Color> invertedColorVector 
     {
-        sf::Color::White,       // inverted Black
-        sf::Color(128, 255, 0), // inverted Violet
-        sf::Color(0, 255, 255), // inverted Red
-        sf::Color(0, 0, 255),   // inverted Yellow
-        sf::Color(255, 255, 0), // inverted Blue
-        sf::Color(255, 0, 255), // inverted Green
-        sf::Color(0, 90, 255),  // inverted Orange
-        sf::Color(82, 39, 25),  // inverted Light Blue
+        sf::Color::White,          // inverted Black
+        sf::Color(128, 255, 0),    // inverted Violet
+        sf::Color(0, 255, 255),    // inverted Red
+        sf::Color(0, 0, 255),      // inverted Yellow
+        sf::Color(255, 255, 0),    // inverted Blue
+        sf::Color(255, 0, 255),    // inverted Green
+        sf::Color(0, 90, 255),     // inverted Orange
+        sf::Color(82, 39, 25),     // inverted Light Blue
+        sf::Color(0, 255, 0, 128), // dark Green
     };
 
     const std::vector<sf::Color> outlineColorVector
@@ -91,9 +98,8 @@ int main()
         sf::Color::White,
         sf::Color::White,   
         sf::Color::White, 
+        sf::Color::White,
     };
-    
-    std::cout << "int main()" << std::endl;
     
     std::vector<Button> buttonVector;
 
@@ -103,16 +109,21 @@ int main()
     for (size_t symbolCode {};
          symbolCode < Symbol::MAX_OF_SYMBOLS;
          ++symbolCode)
-    {
-        Button button (symbolVector[symbolCode]);
-
+    {   
+        
+        Button button (symbolVector[symbolCode], 
+                      (symbolCode == Symbol::PLAY) ? fontForSpecialChars : fontForJapanese);
+    
         button.setSize(sizeOfButtons, sizeOfButtons);
         button.setFillColor(colorVector[symbolCode]);
         button.setTextColor(invertedColorVector[symbolCode]);
         button.setOutlineColor(outlineColorVector[symbolCode]);
 
         buttonVector.push_back(button);
+
+        
     };
+
 
     sf::Vector2f startPositionOfButtons {250.f, 250.f};
 
@@ -131,6 +142,9 @@ int main()
     buttonVector[Symbol::GREED]     .setPosition(startPositionOfButtons.x,
                                                  sizeOfButtons + gapBetweenButtons + startPositionOfButtons.y);
 
+    buttonVector[Symbol::PLAY]      .setPosition(sizeOfButtons + gapBetweenButtons + startPositionOfButtons.x,
+                                                 sizeOfButtons + gapBetweenButtons + startPositionOfButtons.y);
+
     buttonVector[Symbol::LUST]      .setPosition(2.f * sizeOfButtons + 2.f * gapBetweenButtons + startPositionOfButtons.x,
                                                  sizeOfButtons + gapBetweenButtons + startPositionOfButtons.y);
 
@@ -144,6 +158,8 @@ int main()
     buttonVector[Symbol::GLUTTONY]  .setPosition(2.f * sizeOfButtons + 2.f * gapBetweenButtons + startPositionOfButtons.x,
                                                  2.f * sizeOfButtons + 2.f * gapBetweenButtons + startPositionOfButtons.y);
 
+    // shifting text of middle action button
+    buttonVector[Symbol::PLAY].shiftTextPosition(-8, 5);
 
     sf::RenderWindow window(sf::VideoMode(900, 900), "My window");
 
@@ -152,11 +168,17 @@ int main()
     sf::Vector2f localCursorPosition{};
     sf::FloatRect buttonBoundingBox;
 
-    bool isOutlineSwitched (true);
     bool isButtonsAnimationInAction (false);
 
     uint8_t counterOfActiveAnimations {};
 
+    //
+
+    bool playerAction = true;
+
+    bool playSequence = false;
+
+    
     // run the program as long as the window is open
     while (window.isOpen())
     {
@@ -165,7 +187,8 @@ int main()
             for (size_t symbol{};
                  symbol < Symbol::MAX_OF_SYMBOLS;
                  ++symbol)
-            {   
+            { 
+                
                 if (buttonVector[symbol].m_isButtonInAnimation)
                 {
                     if (std::chrono::steady_clock::now() - buttonVector[symbol].m_timePointForAnimation 
@@ -176,8 +199,17 @@ int main()
                         buttonVector[symbol].m_isButtonInAnimation = false;
                         
                         counterOfActiveAnimations -= 1;
+
+                        if (symbol == Symbol::PLAY
+                            &&
+                            playerAction)
+                        {
+                            playSequence = true;
+                            playerAction = false;
+                        }
                     }
                 }
+                
             }
             
             if (counterOfActiveAnimations == 0)
@@ -187,7 +219,7 @@ int main()
             
         }
 
-
+        
         // check all the window's events that were triggered since the last iteration of the loop
         sf::Event event;
         while (window.pollEvent(event))
@@ -205,8 +237,8 @@ int main()
                     localCursorPosition.y = sf::Mouse::getPosition(window).y;
                     
                     for (size_t symbol{};
-                         symbol < Symbol::MAX_OF_SYMBOLS;
-                         ++symbol)
+                        symbol < Symbol::MAX_OF_SYMBOLS;
+                        ++symbol)
                     {
                         buttonBoundingBox = buttonVector[symbol].getGlobalBounds();
 
@@ -278,11 +310,13 @@ int main()
 
                 case sf::Event::MouseButtonPressed:
 
-                    if (event.mouseButton.button == sf::Mouse::Left)
+                    if (event.mouseButton.button == sf::Mouse::Left
+                        &&
+                        playerAction)
                     {
                         for (size_t symbol{};
-                         symbol < Symbol::MAX_OF_SYMBOLS;
-                         ++symbol)
+                        symbol < Symbol::MAX_OF_SYMBOLS;
+                        ++symbol)
                         {
                             buttonBoundingBox = buttonVector[symbol].getGlobalBounds();
 
@@ -323,6 +357,7 @@ int main()
             }
         }
         
+
         window.clear(sf::Color::Black);
 
         for(Button &button : buttonVector)
@@ -331,6 +366,7 @@ int main()
             window.draw(button.getButtonText());
         }
         
+
         window.display();
 
     }
