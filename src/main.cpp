@@ -7,6 +7,16 @@
 
 #include <Button.h>
 
+void startOfButtonAnimation(Button &button)
+{
+    button.swapColorsOfTextAndRectangle();
+
+    button.m_timePointForAnimation = std::chrono::steady_clock::now();
+
+    button.m_isButtonInAnimation = true;
+}
+
+//////////////////////////////////////////////////////////////////////////////
 
 enum Symbol
 {
@@ -21,6 +31,7 @@ enum Symbol
     MAX_OF_SYMBOLS
 };
 
+// definition of Button static member 
 sf::Font Button::m_allButtonsFont;
 
 int main()
@@ -101,9 +112,6 @@ int main()
         button.setOutlineColor(outlineColorVector[symbolCode]);
 
         buttonVector.push_back(button);
-
-        //delete button;
-        //button = nullptr;
     };
 
     sf::Vector2f startPositionOfButtons {250.f, 250.f};
@@ -147,14 +155,11 @@ int main()
     bool isOutlineSwitched (true);
     bool isButtonsAnimationInAction (false);
 
-    std::chrono::time_point<std::chrono::steady_clock> mainTimePoint = std::chrono::steady_clock::now();
-    uint8_t counterOfUnactiveAnimations {};
+    uint8_t counterOfActiveAnimations {};
 
     // run the program as long as the window is open
     while (window.isOpen())
     {
-
-
         if (isButtonsAnimationInAction)
         {
             for (size_t symbol{};
@@ -163,22 +168,19 @@ int main()
             {   
                 if (buttonVector[symbol].m_isButtonInAnimation)
                 {
-                    if (std::chrono::steady_clock::now() - buttonVector[symbol].m_timePointForAnimation >= buttonVector[symbol].m_durationOfButtonAnimation)
+                    if (std::chrono::steady_clock::now() - buttonVector[symbol].m_timePointForAnimation 
+                        >= buttonVector[symbol].m_durationOfButtonAnimation)
                     {
                         buttonVector[symbol].swapColorsOfTextAndRectangle();
 
                         buttonVector[symbol].m_isButtonInAnimation = false;
                         
-                        counterOfUnactiveAnimations = 0;
+                        counterOfActiveAnimations -= 1;
                     }
                 }
-                else
-                {
-                    counterOfUnactiveAnimations += 1;
-                }
-            } 
+            }
             
-            if (counterOfUnactiveAnimations == 6)
+            if (counterOfActiveAnimations == 0)
             {
                 isButtonsAnimationInAction = false;
             }
@@ -289,13 +291,13 @@ int main()
                         
                                 if (!buttonVector[symbol].m_isButtonInAnimation)
                                 {
-                                    buttonVector[symbol].swapColorsOfTextAndRectangle();
+                                    startOfButtonAnimation(buttonVector[symbol]);
 
-                                    buttonVector[symbol].m_timePointForAnimation = std::chrono::steady_clock::now();
+                                    counterOfActiveAnimations += 1;
 
-                                    buttonVector[symbol].m_isButtonInAnimation = true;
                                     isButtonsAnimationInAction = true;
                                 }
+                                
                             }
                         }
                     }
@@ -316,8 +318,6 @@ int main()
 
                 // we don't process other types of events
                 default:
-
-                    //std::cout << "f " << std::endl;
 
                     break;
             }
