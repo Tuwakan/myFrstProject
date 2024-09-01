@@ -2,10 +2,23 @@
 #include <iostream>
 #include <chrono>
 #include <vector>
-//#include <thread>
+#include <thread>
+#include <random>
 //#include <mutex>
 
 #include <Button.h>
+
+constexpr uint32_t UINT32_T_MAX = 4294967295;
+
+uint16_t getRandomDigit()
+{
+    std::random_device rd;
+    std::mt19937 mersenne(rd());
+
+    static const double fraction = 1.0 / (static_cast<double>(UINT32_T_MAX) + 1.0);
+    // Равномерно распределяем генерацию значения из диапазона
+    return static_cast<int>(mersenne() * fraction * 10);
+}
 
 void startOfButtonAnimation(Button &button)
 {
@@ -160,6 +173,7 @@ int main()
 
     // shifting text of middle action button
     buttonVector[Symbol::PLAY].shiftTextPosition(-8, 5);
+    buttonVector[Symbol::PLAY].m_durationOfButtonAnimation = std::chrono::seconds(1);
 
     sf::RenderWindow window(sf::VideoMode(900, 900), "My window");
 
@@ -172,12 +186,17 @@ int main()
 
     uint8_t counterOfActiveAnimations {};
 
-    //
+    // game logic //
 
     bool playerAction = true;
-
     bool playSequence = false;
 
+    bool newLevel = true;
+
+    size_t countOfSymbolSequence = 0;
+    size_t currentSymbol = 0;
+
+    std::vector<Symbol> playingSymbolsVector;
     
     // run the program as long as the window is open
     while (window.isOpen())
@@ -206,6 +225,18 @@ int main()
                         {
                             playSequence = true;
                             playerAction = false;
+
+                            // setting off all active buttons outline
+                            for (size_t symbol{};
+                            symbol < Symbol::MAX_OF_SYMBOLS;
+                            ++symbol)
+                            {
+                                if (buttonVector[symbol].m_outlineToggle)
+                                {
+                                    buttonVector[symbol].toggleButtonOutline();
+                                    buttonVector[symbol].m_outlineToggle = false;
+                                }
+                            }
                         }
                     }
                 }
@@ -236,31 +267,33 @@ int main()
                     localCursorPosition.x = sf::Mouse::getPosition(window).x;
                     localCursorPosition.y = sf::Mouse::getPosition(window).y;
                     
-                    for (size_t symbol{};
-                        symbol < Symbol::MAX_OF_SYMBOLS;
-                        ++symbol)
+                    if (playerAction)
                     {
-                        buttonBoundingBox = buttonVector[symbol].getGlobalBounds();
-
-                        if (buttonBoundingBox.contains(localCursorPosition))
+                        for (size_t symbol{};
+                            symbol < Symbol::MAX_OF_SYMBOLS;
+                            ++symbol)
                         {
-                            if (!buttonVector[symbol].m_outlineToggle)
-                            {
-                                buttonVector[symbol].toggleButtonOutline();
-                                buttonVector[symbol].m_outlineToggle = true;
-                            }
-                        }
-                        else
-                        {
-                            if (buttonVector[symbol].m_outlineToggle)
-                            {
-                                buttonVector[symbol].toggleButtonOutline();
-                                buttonVector[symbol].m_outlineToggle = false;
-                            }
+                            buttonBoundingBox = buttonVector[symbol].getGlobalBounds();
 
+                            if (buttonBoundingBox.contains(localCursorPosition))
+                            {
+                                if (!buttonVector[symbol].m_outlineToggle)
+                                {
+                                    buttonVector[symbol].toggleButtonOutline();
+                                    buttonVector[symbol].m_outlineToggle = true;
+                                }
+                            }
+                            else
+                            {
+                                if (buttonVector[symbol].m_outlineToggle)
+                                {
+                                    buttonVector[symbol].toggleButtonOutline();
+                                    buttonVector[symbol].m_outlineToggle = false;
+                                }
+
+                            }
                         }
                     }
-
                     break;
 
                 case sf::Event::Resized:
@@ -331,7 +364,6 @@ int main()
 
                                     isButtonsAnimationInAction = true;
                                 }
-                                
                             }
                         }
                     }
@@ -357,13 +389,51 @@ int main()
             }
         }
         
-
-        window.clear(sf::Color::Black);
-
-        for(Button &button : buttonVector)
+        if (playSequence)
         {
-            window.draw(button);
-            window.draw(button.getButtonText());
+            if (!isButtonsAnimationInAction)
+            {
+                countOfSymbolSequence += 1;
+                playingSymbolsVector.push_back(static_cast<Symbol>(getRandomDigit()));
+
+                isButtonsAnimationInAction = true;
+            }
+
+            if (isButtonsAnimationInAction)
+            {
+                if (!buttonVector[playingSymbolsVector[currentSymbol]].m_isButtonInAnimation)
+                {
+                    buttonVector[playingSymbolsVector[currentSymbol]].m_durationOfButtonAnimation = std::chrono::milliseconds(1000);
+
+                    startOfButtonAnimation(buttonVector[playingSymbolsVector[currentSymbol]]);
+
+                    
+                    currentSymbol += 1;
+
+                    if (currentSymbol == countOfSymbolSequence)
+                    {
+                        currentSymbol = 0;
+
+                        isButtonsAnimationInAction = false;
+                    }
+                }
+            }
+        }
+
+        window.clear();
+
+        for (size_t symbol{};
+             symbol < Symbol::MAX_OF_SYMBOLS - 1; // |Symbol::MAX_OF_SYMBOLS - 1| - last button must be removed when game in sequence phase
+             ++symbol)
+        {
+            window.draw(buttonVector[symbol]);
+            window.draw(buttonVector[symbol].getButtonText());
+        }
+
+        if (playerAction)
+        {
+            window.draw(buttonVector[Symbol::PLAY]);
+            window.draw(buttonVector[Symbol::PLAY].getButtonText());
         }
         
 
