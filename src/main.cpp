@@ -17,7 +17,7 @@ uint16_t getRandomDigit()
 
     static const double fraction = 1.0 / (static_cast<double>(UINT32_T_MAX) + 1.0);
     // Равномерно распределяем генерацию значения из диапазона
-    return static_cast<int>(mersenne() * fraction * 10);
+    return static_cast<int>(mersenne() * fraction * (8 - 1 + 1) + 1); 
 }
 
 void startOfButtonAnimation(Button &button)
@@ -144,7 +144,7 @@ int main()
 
     buttonVector[Symbol::PRIDE]     .setPosition(startPositionOfButtons.x, 
                                                  startPositionOfButtons.y);
-
+                                                 
     buttonVector[Symbol::EVIL]      .setPosition(sizeOfButtons + gapBetweenButtons + startPositionOfButtons.x,
                                                  startPositionOfButtons.y);
 
@@ -190,6 +190,8 @@ int main()
 
     bool playerAction = true;
     bool playSequence = false;
+
+    bool isSequenceAnimationInAction = false;
 
     bool newLevel = true;
 
@@ -250,7 +252,7 @@ int main()
             
         }
 
-        
+
         // check all the window's events that were triggered since the last iteration of the loop
         sf::Event event;
         while (window.pollEvent(event))
@@ -362,6 +364,8 @@ int main()
 
                                     counterOfActiveAnimations += 1;
 
+                                    if (symbol == symbolVector[currentSymbol])
+
                                     isButtonsAnimationInAction = true;
                                 }
                             }
@@ -391,34 +395,52 @@ int main()
         
         if (playSequence)
         {
-            if (!isButtonsAnimationInAction)
+            if (!isSequenceAnimationInAction)
             {
                 countOfSymbolSequence += 1;
                 playingSymbolsVector.push_back(static_cast<Symbol>(getRandomDigit()));
 
-                isButtonsAnimationInAction = true;
-            }
+                currentSymbol = 0;
 
-            if (isButtonsAnimationInAction)
+                isSequenceAnimationInAction = true;
+            }
+            else
             {
                 if (!buttonVector[playingSymbolsVector[currentSymbol]].m_isButtonInAnimation)
                 {
-                    buttonVector[playingSymbolsVector[currentSymbol]].m_durationOfButtonAnimation = std::chrono::milliseconds(1000);
-
                     startOfButtonAnimation(buttonVector[playingSymbolsVector[currentSymbol]]);
-
+                }
+                else
+                {
                     
-                    currentSymbol += 1;
-
-                    if (currentSymbol == countOfSymbolSequence)
+                    if (std::chrono::steady_clock::now() - buttonVector[playingSymbolsVector[currentSymbol]].m_timePointForAnimation 
+                        >= buttonVector[playingSymbolsVector[currentSymbol]].m_sequenceDurationOfButtonAnimation)
                     {
-                        currentSymbol = 0;
+                        std::cout << "code : " << playingSymbolsVector[currentSymbol] << std::endl;
 
-                        isButtonsAnimationInAction = false;
+                        buttonVector[playingSymbolsVector[currentSymbol]].swapColorsOfTextAndRectangle();
+
+                        buttonVector[playingSymbolsVector[currentSymbol]].m_isButtonInAnimation = false;
+
+                        if (currentSymbol+1 == countOfSymbolSequence)
+                        {
+                            std::cout << "BOOBS" << std::endl;
+
+                            isSequenceAnimationInAction = false;
+
+                            playSequence = false;
+                            playerAction = true;
+
+                        }
+
+                        currentSymbol += 1;
                     }
+                
                 }
             }
         }
+
+        
 
         window.clear();
 

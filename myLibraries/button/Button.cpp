@@ -39,7 +39,7 @@ sf::Vector2f Button::initMinimalSizeButtonOutOfTextSizeThatIsCreatedFromString(c
 
         sf::Vector2f minimalSizeOfButton;
 
-        // correcting size of displayed text, because 
+        // correcting box size of displayed text, because 
         // |m_buttonText.getGlobalBounds()| does not give bound box that cover all the text
         minimalSizeOfButton.x = boundingBoxOfButtonText.width + 10;
         minimalSizeOfButton.y = boundingBoxOfButtonText.height * 1.3;

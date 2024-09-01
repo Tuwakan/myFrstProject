@@ -29,6 +29,7 @@ public:
 
     bool m_isButtonInAnimation {false};
     std::chrono::duration<long long, std::milli> m_durationOfButtonAnimation = std::chrono::milliseconds(200);
+    std::chrono::duration<long long, std::milli> m_sequenceDurationOfButtonAnimation = std::chrono::milliseconds(1000);
     std::chrono::time_point<std::chrono::steady_clock> m_timePointForAnimation;
 
     Button(const sf::String &buttonString, const sf::Font &font);
